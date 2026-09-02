@@ -4,10 +4,13 @@ from app.routes.translation import router as translation_router
 
 app = FastAPI(title="AI Language Translator API")
 
-# CORS setup - React frontend ko backend se baat karne dega
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

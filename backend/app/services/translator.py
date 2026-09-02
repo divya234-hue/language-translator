@@ -1,26 +1,29 @@
 ﻿import httpx
 from fastapi import HTTPException
 
-LIBRETRANSLATE_URL = "https://libretranslate.de/translate"
+MYMEMORY_URL = "https://api.mymemory.translated.net/get"
 
 
 async def translate_text(text: str, source_lang: str, target_lang: str) -> str:
     """
-    LibreTranslate API ko call karta hai aur translated text return karta hai.
+    MyMemory Translation API ko call karta hai aur translated text return karta hai.
     """
-    payload = {
+    params = {
         "q": text,
-        "source": source_lang,
-        "target": target_lang,
-        "format": "text",
+        "langpair": f"{source_lang}|{target_lang}",
     }
 
     try:
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            response = await client.post(LIBRETRANSLATE_URL, json=payload)
+        async with httpx.AsyncClient(timeout=15.0, follow_redirects=True) as client:
+            response = await client.get(MYMEMORY_URL, params=params)
             response.raise_for_status()
             data = response.json()
-            return data["translatedText"]
+
+            translated = data.get("responseData", {}).get("translatedText")
+            if not translated:
+                raise ValueError("No translation found in response")
+
+            return translated
 
     except httpx.HTTPStatusError as e:
         raise HTTPException(
