@@ -1,8 +1,11 @@
-﻿import { useState } from "react";
+﻿import { useState, useEffect } from "react";
 import LanguageSelector from "./components/LanguageSelector";
 import TranslationBox from "./components/TranslationBox";
 import TranslateButton from "./components/TranslateButton";
+import TranslationHistory from "./components/TranslationHistory";
 import { translateText } from "./services/translationApi";
+import { getHistory, addToHistory, clearHistory } from "./services/historyStorage";
+import type { TranslationHistoryItem } from "./types/history";
 
 function App() {
   const [sourceLang, setSourceLang] = useState("en");
@@ -12,6 +15,11 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [history, setHistory] = useState<TranslationHistoryItem[]>([]);
+
+  useEffect(() => {
+    setHistory(getHistory());
+  }, []);
 
   const handleTranslate = async () => {
     setError("");
@@ -30,6 +38,14 @@ function App() {
         target_language: targetLang,
       });
       setOutputText(result.translated_text);
+
+      const updated = addToHistory({
+        sourceText: inputText,
+        translatedText: result.translated_text,
+        sourceLanguage: result.source_language,
+        targetLanguage: result.target_language,
+      });
+      setHistory(updated);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -49,6 +65,11 @@ function App() {
     setOutputText("");
     setError("");
     setCopied(false);
+  };
+
+  const handleClearHistory = () => {
+    clearHistory();
+    setHistory([]);
   };
 
   const handleCopy = async () => {
@@ -73,11 +94,7 @@ function App() {
         </h1>
 
         <div className="flex items-center gap-3">
-          <LanguageSelector
-            label="Source Language"
-            value={sourceLang}
-            onChange={setSourceLang}
-          />
+          <LanguageSelector label="Source Language" value={sourceLang} onChange={setSourceLang} />
           <button
             onClick={handleSwap}
             title="Swap languages"
@@ -85,11 +102,7 @@ function App() {
           >
             ⇄
           </button>
-          <LanguageSelector
-            label="Target Language"
-            value={targetLang}
-            onChange={setTargetLang}
-          />
+          <LanguageSelector label="Target Language" value={targetLang} onChange={setTargetLang} />
         </div>
 
         <TranslationBox
@@ -139,6 +152,8 @@ function App() {
             🔊 Listen
           </button>
         </div>
+
+        <TranslationHistory history={history} onClear={handleClearHistory} />
       </div>
     </div>
   );

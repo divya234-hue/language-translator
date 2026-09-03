@@ -5,7 +5,7 @@ const API_BASE_URL = "http://localhost:8000";
 export async function translateText(
   payload: TranslationRequest
 ): Promise<TranslationResponse> {
-  const response = await fetch(`${API_BASE_URL}/translate`, {
+  const response = await fetch(`${API_BASE_URL}/api/translate`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
