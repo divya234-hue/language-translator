@@ -1,75 +1,168 @@
-# CodeAlpha_LanguageTranslationTool
+\# Language Translation AI
 
-A web-based Language Translation Tool built for the CodeAlpha Artificial Intelligence Internship (Task 1).
 
-## Features
 
-- Enter text and pick a source and target language from dropdowns
-- Translates using the `deep-translator` library (wraps Google Translate — free, no API key needed)
-- Displays the translated text clearly on screen
-- **Optional features included:**
-  - 🔊 Text-to-speech playback for both the original and translated text (via `gTTS`)
-  - ⧉ Copy-to-clipboard button for the translation
-  - ⇄ One-click language swap
-  - Live character counter
+\## Overview
 
-## Project Structure
 
-```
-CodeAlpha_LanguageTranslationTool/
-├── app.py                 # Flask backend + translation/TTS routes
-├── requirements.txt       # Python dependencies
-├── templates/
-│   └── index.html         # Main page
-└── static/
-    ├── style.css           # Styling
-    ├── script.js           # Frontend logic (fetch calls, UI interactions)
-    └── audio/              # Generated TTS audio files (created at runtime)
-```
 
-## Setup & Run
+An AI-powered language translation web application that translates text between multiple languages using locally-hosted Hugging Face Transformer models (MarianMT). Unlike simple API-wrapper translators, this project runs actual neural machine translation models on the backend — giving full control over inference, caching, and performance, with no dependency on third-party translation APIs or API keys.
 
-1. **Clone the repo**
-   ```bash
-   git clone https://github.com/<your-username>/CodeAlpha_LanguageTranslationTool.git
-   cd CodeAlpha_LanguageTranslationTool
-   ```
 
-2. **Create a virtual environment (recommended)**
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # on Windows: venv\Scripts\activate
-   ```
 
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+\## Features
 
-4. **Run the app**
-   ```bash
-   python app.py
-   ```
 
-5. Open your browser at **http://127.0.0.1:5000**
 
-## How It Works
+\- Real-time neural machine translation using Hugging Face Transformers + PyTorch
 
-1. The user types text into the left panel and chooses a source and target language.
-2. Clicking **Translate** sends a POST request to `/translate` on the Flask backend.
-3. The backend calls `GoogleTranslator` from `deep-translator` to translate the text.
-4. The translated text is returned as JSON and rendered in the right panel.
-5. The 🔊 buttons call `/speak`, which uses `gTTS` to generate an MP3 and play it in the browser.
+\- Support for multiple language pairs (English ↔ French, German, Spanish, Hindi)
 
-## Notes
+\- In-memory translation caching to avoid redundant model inference
 
-- `deep-translator` requires an internet connection since it calls Google Translate's public translation endpoint under the hood — no API key or billing setup required.
-- To use an official paid API instead (e.g., Google Cloud Translation API or Microsoft Translator), swap out the call inside `app.py`'s `/translate` route with the relevant SDK call.
-- Generated audio files are saved to `static/audio/` — you may want to clear this folder periodically or add cleanup logic for production use.
+\- Automatic CPU/GPU device detection
 
-## Submission Checklist (CodeAlpha)
+\- Translation history stored client-side (localStorage)
 
-- [ ] Push this project to GitHub as `CodeAlpha_LanguageTranslationTool`
-- [ ] Record a short video walking through the code and a live demo
-- [ ] Post the video + repo link on LinkedIn, tagging @CodeAlpha
-- [ ] Submit via the CodeAlpha submission form
+\- Clean, responsive React + TypeScript UI
+
+\- Language swap, copy-to-clipboard, and text-to-speech playback
+
+\- Input validation (empty text, max length, unsupported/duplicate language pairs)
+
+\- Structured logging with latency tracking
+
+\- Automated backend tests with pytest (model-mocked, no downloads required)
+
+\- Dockerized backend for portable deployment
+
+
+
+\## Architecture
+
+React (TypeScript, Vite)
+
+down REST (fetch)
+
+FastAPI Backend
+
+down
+
+Translation Service Layer
+
+down
+
+Hugging Face Transformers (MarianMT)
+
+down
+
+PyTorch (CPU/GPU inference)
+
+
+
+
+
+
+
+\## Tech Stack
+
+
+
+\*\*Frontend:\*\* React, TypeScript, Vite, Tailwind CSS
+
+\*\*Backend:\*\* Python, FastAPI, Pydantic
+
+\*\*AI/ML:\*\* Hugging Face Transformers, PyTorch, MarianMT (Helsinki-NLP)
+
+\*\*Testing:\*\* pytest, unittest.mock
+
+\*\*Infrastructure:\*\* Docker
+
+
+
+\## Installation
+
+
+
+\### Backend
+
+cd backend
+
+python -m venv venv
+
+venv\\Scripts\\Activate.ps1
+
+pip install -r requirements.txt
+
+
+
+\### Frontend
+
+cd frontend
+
+npm install
+
+
+
+\## Running Locally
+
+
+
+\*\*Backend:\*\* uvicorn app.main:app --reload --port 8000 (runs at localhost:8000)
+
+\*\*Frontend:\*\* npm run dev (runs at localhost:5173)
+
+
+
+\## API Documentation
+
+
+
+Swagger UI: http://localhost:8000/docs
+
+ReDoc: http://localhost:8000/redoc
+
+
+
+\### POST /api/translate
+
+Request: {"text": "Hello", "source\_language": "en", "target\_language": "fr"}
+
+Response: {"translated\_text": "Bonjour", "source\_language": "en", "target\_language": "fr"}
+
+
+
+\### GET /health
+
+Returns service status.
+
+
+
+\## Supported Languages
+
+English to/from French, German, Spanish, Hindi
+
+
+
+\## Testing
+
+cd backend
+
+pytest tests/ -v
+
+
+
+\## Docker
+
+docker build -t translator-backend .
+
+docker run -p 8000:8000 translator-backend
+
+
+
+\## Resume Description
+
+Built a full-stack AI translation platform (React/TypeScript + FastAPI) that performs neural machine translation locally using Hugging Face Transformer models (MarianMT) and PyTorch, replacing a third-party API dependency. Implemented in-memory caching, structured logging with latency tracking, automatic CPU/GPU device selection, input validation, a mocked pytest suite, and Docker containerization for deployment.
+
+
+
